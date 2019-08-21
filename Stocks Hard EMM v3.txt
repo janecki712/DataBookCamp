@@ -1,0 +1,162 @@
+﻿ub StockTracker():
+
+Dim Stock As String
+Dim StockVol As Double
+StockVol = 0
+Dim Summary_Table_Row As Integer
+Summary_Table_Row = 2
+Dim lrow As Long
+Dim ychange As Single
+Dim stockopen As Single
+Dim stockclose As Single
+stockopen = Cells(2, 3).Value
+Dim Percentchange As Single
+Dim Lrowsummary As Long
+Dim MaxPC As Single
+Dim MaxV As Double
+Dim MinPC As Double
+MaxPC = 0
+MaxV = 0
+MinPC = 0
+Dim TickerMaxPC As String
+Dim TickerMaxV As String
+Dim TickerMinPC As String
+
+
+'Add Summary Table Headers
+Range("I1") = "Ticker"
+Range("J1") = "Yearly Change"
+Range("K1") = "Percent Change"
+Range("L1") = "Total Stock Volume"
+
+'find the last Row
+
+lrow = Cells(Rows.Count, 1).End(xlUp).Row
+
+
+   For i = 2 To lrow
+
+     'See if Stock symbol changes
+      If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+
+      'Get Stock name
+      Stock = Cells(i, 1).Value
+     
+      ' Add volume total to the Summary Table
+      StockVol = StockVol + Cells(i, 12).Value
+
+      ' Print the Stock name in the Summary Table
+      Range("I" & Summary_Table_Row).Value = Stock
+      
+      ' Print the Stock volume to the Summary Table
+      Range("L" & Summary_Table_Row).Value = StockVol
+      '
+      
+      'Get the closing price
+      stockclose = Cells(i, 6).Value
+      
+      'Calculate the ychange
+      ychange = stockclose - stockopen
+      
+      'Calculate percentchange
+      
+        If stockopen = 0 Then
+        Percentchange = 0
+        
+        Else
+        
+        Percentchange = ychange / stockopen
+      
+        End If
+      
+      'Print ychange in table
+      Range("J" & Summary_Table_Row).Value = ychange
+      
+     'Print percentchange in table
+      Range("K" & Summary_Table_Row).Value = Percentchange
+      
+     'Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+      
+      ' Reset the Stock Volume Total
+      StockVol = 0
+      
+      'Reset stockopen
+      stockopen = Cells(i + 1, 3).Value
+
+    ' When cell has the same stock ticker
+    Else
+
+      ' Add to the Stock Volume Total
+      StockVol = StockVol + Cells(i, 7).Value
+
+    End If
+
+  Next i
+  
+
+'Find last row of summary table
+
+Lrowsummary = Cells(Rows.Count, 10).End(xlUp).Row
+
+For i = 2 To Lrowsummary
+'Format cell color in Percent change column
+        
+   If Cells(i, 10) >= 0 Then
+   Cells(i, 10).Interior.ColorIndex = 4
+   Else
+   Cells(i, 10).Interior.ColorIndex = 3
+              
+              
+    End If
+
+ Next i
+ 
+'Create Summary Table  for Hard Exercise
+Range("O2") = "Greatest % Increase"
+Range("O3") = "Greatest % Decrease"
+Range("O4") = "Greatest Total Volume"
+Range("P1") = "Ticker"
+Range("Q1") = "Value"
+
+ 
+For i = 2 To Lrowsummary
+
+            'Get Max percent change
+            If Cells(i, 11).Value > MaxPC Then
+            MaxPC = Cells(i, 11).Value
+            TickerMaxPC = Cells(i, 9).Value
+            
+            End If
+
+            'Get Min percent change
+            If Cells(i, 11).Value < MinPC Then
+            MinPC = Cells(i, 11).Value
+            TickerMinPC = Cells(i, 9).Value
+            
+            End If
+
+            'Get Max Volume
+            If Cells(i, 12).Value > MaxV Then
+            MaxV = Cells(i, 12).Value
+            TickerMaxV = Cells(i, 9).Value
+            
+            End If
+    
+        
+       
+Next i
+
+'Print to Max/Min Summary Table
+Range("P2") = TickerMaxPC
+Range("Q2") = MaxPC
+
+Range("P3") = TickerMinPC
+Range("Q3") = MinPC
+
+Range("P4") = TickerMaxV
+Range("Q4") = MaxV
+
+End Sub
+
+
